@@ -8,7 +8,7 @@
 
 import Foundation
 
-class Post {
+class Post: Codable {
     let text: String
     let username: String
     let timestamp: TimeInterval = Date().timeIntervalSince1970
