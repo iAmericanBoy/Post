@@ -18,11 +18,13 @@ class PostController {
     func fetchPosts(completion: @escaping () -> Void) {
         guard let url = baseURL else {return}
         
-        var getterEndPoint = URLRequest(url: url)
-        getterEndPoint.httpMethod = "GET"
-        getterEndPoint.httpBody = nil
+        let getterEndpoint = url.appendingPathExtension("json")
         
-        let dataTask = URLSession.shared.dataTask(with: getterEndPoint) { (data, _, error) in
+        var request = URLRequest(url: getterEndpoint)
+        request.httpMethod = "GET"
+        request.httpBody = nil
+        
+        let dataTask = URLSession.shared.dataTask(with: request) { (data, _, error) in
             do {
                 if let downloadError = error {
                     print(downloadError)

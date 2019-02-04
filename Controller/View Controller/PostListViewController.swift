@@ -20,7 +20,9 @@ class PostListViewController: UIViewController {
         tableView.delegate = self
         tableView.dataSource = self
         postController.fetchPosts {
-            self.tableView.reloadData()
+            DispatchQueue.main.async {
+                self.tableView.reloadData()
+            }
         }
     }
 }
