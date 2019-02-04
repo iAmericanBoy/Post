@@ -25,19 +25,22 @@ class PostListViewController: UIViewController {
         tableView.refreshControl = refreshControl
         refreshControl.addTarget(self, action: #selector(refreshControllerPulled), for: .valueChanged)
         postController.fetchPosts {
-            DispatchQueue.main.async {
-                self.tableView.reloadData()
-            }
+            self.reloadTableView()
         }
     }
     
     //MARK: - Actions
     @objc func refreshControllerPulled() {
         postController.fetchPosts {
-            DispatchQueue.main.async {
-                self.tableView.reloadData()
-                self.refreshControl.endRefreshing()
-            }
+            self.reloadTableView()
+            self.refreshControl.endRefreshing()
+        }
+    }
+    
+    //MARK: - Private Functions
+    func reloadTableView() {
+        DispatchQueue.main.async {
+            self.tableView.reloadData()
         }
     }
 }
