@@ -19,6 +19,8 @@ class PostListViewController: UIViewController {
         super.viewDidLoad()
         tableView.delegate = self
         tableView.dataSource = self
+        tableView.estimatedRowHeight = 45
+        tableView.rowHeight = UITableView.automaticDimension
         postController.fetchPosts {
             DispatchQueue.main.async {
                 self.tableView.reloadData()
@@ -39,7 +41,8 @@ extension PostListViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "postCell", for: indexPath)
         cell.textLabel?.text = postController.posts[indexPath.row].text
-        cell.detailTextLabel?.text = postController.posts[indexPath.row].username
+        let postDate = Date(timeIntervalSince1970: postController.posts[indexPath.row].timestamp)
+        cell.detailTextLabel?.text = "\(postController.posts[indexPath.row].username) \(postDate)"
         return cell
     }
     
