@@ -15,7 +15,6 @@ class Post: Codable {
     var date: String {
         get {
             let dateInCurrentTimeZone = Calendar.current.dateComponents(in: TimeZone.current, from: Date(timeIntervalSince1970: timestamp))
-            print(dateInCurrentTimeZone)
             let dateFormatter = DateFormatter()
             dateFormatter.timeStyle = .medium
             return dateInCurrentTimeZone.date!.description(with: Locale.current)

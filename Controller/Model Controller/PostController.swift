@@ -21,8 +21,7 @@ class PostController {
         let newPost = Post(text: text, username: username)
         
         var postData: Data
-
-
+        
         do {
             let encoder = JSONEncoder()
             postData =  try encoder.encode(newPost)
@@ -53,13 +52,27 @@ class PostController {
             })
         }
         dataTask.resume()
-
-  
+        
+        
     }
     
     //MARK: - Read
-    func fetchPosts(completion: @escaping () -> Void) {
-        guard let url = baseURL else {return}
+    func fetchPosts(isReset: Bool = true, completion: @escaping () -> Void) {
+        let queryEndInterval = isReset ? Date().timeIntervalSince1970 : posts.last?.timestamp ?? Date().timeIntervalSince1970
+        
+        guard let baseURL = baseURL else {return}
+        
+        let urlParameters = [
+            "orderBy": "\"timestamp\"",
+            "endAt": "\(queryEndInterval)",
+            "limitToLast": "15",
+            ]
+        let queryItems = urlParameters.compactMap( { URLQueryItem(name: $0.key, value: $0.value) } )
+        
+        var urlComponents = URLComponents(url: baseURL, resolvingAgainstBaseURL: true)
+        urlComponents?.queryItems = queryItems
+        
+        guard let url = urlComponents?.url else {return}
         
         let getterEndpoint = url.appendingPathExtension("json")
         
@@ -68,30 +81,29 @@ class PostController {
         request.httpBody = nil
         
         let dataTask = URLSession.shared.dataTask(with: request) { (data, _, error) in
-            do {
-                if let downloadError = error {
-                    print(downloadError)
-                    completion()
-                    return
-                }
-                guard let data = data else {
-                    completion()
-                    return
-                }
-                //Decode
-                let jsonDecoder = JSONDecoder()
-                let postDictonary = try! jsonDecoder.decode([String:Post].self, from: data)
-                
-                var posts = postDictonary.compactMap({ $0.value })
-                try posts.sort(by: { $0.timestamp > $1.timestamp })
-                self.posts = posts
-                completion()
-                return
-            } catch {
-                print(error)
+            if let downloadError = error {
+                print(downloadError)
                 completion()
                 return
             }
+            guard let data = data else {
+                completion()
+                return
+            }
+            //Decode
+            let jsonDecoder = JSONDecoder()
+            let postDictonary = try! jsonDecoder.decode([String:Post].self, from: data)
+            
+            var posts = postDictonary.compactMap({ $0.value })
+            posts.sort(by: { $0.timestamp > $1.timestamp })
+            if isReset {
+                self.posts = posts
+            } else {
+                self.posts += posts
+            }
+            completion()
+            return
+            
         }
         dataTask.resume()
     }
