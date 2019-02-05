@@ -24,7 +24,7 @@ class PostController {
         
         do {
             let encoder = JSONEncoder()
-            postData =  try encoder.encode(newPost)
+            postData = try encoder.encode(newPost)
         } catch  {
             print("Error encoding PostData: \(error) \(error.localizedDescription) ")
             completion()
@@ -47,7 +47,7 @@ class PostController {
             guard let data = data, let dataString = String(data: data, encoding: .utf8) else {print("error unwrapping data"); completion(); return}
             
             
-            self.fetchPosts(isReset: false, completion: {
+            self.fetchPosts(isReset: true, completion: {
                 completion()
             })
         }
