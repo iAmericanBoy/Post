@@ -47,7 +47,6 @@ class PostController {
             }
             guard let data = data, let dataString = String(data: data, encoding: .utf8) else {print("error unwrapping data"); completion(); return}
             
-            print(dataString)
             
             self.fetchPosts(completion: {
                 completion()

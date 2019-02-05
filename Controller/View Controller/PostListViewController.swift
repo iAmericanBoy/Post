@@ -41,12 +41,54 @@ class PostListViewController: UIViewController {
         }
     }
     
+    @IBAction func addNewPostButtonTapped(_ sender: UIBarButtonItem) {
+        presentNewPostAlert()
+    }
+    
     //MARK: - Private Functions
     func reloadTableView() {
         DispatchQueue.main.async {
             self.tableView.reloadData()
             UIApplication.shared.isNetworkActivityIndicatorVisible = false
         }
+    }
+    func presentNewPostAlert() {
+        var userNameTextField = UITextField()
+        var messageTextField = UITextField()
+
+        let postAlert = UIAlertController(title: "New Post", message: nil, preferredStyle: .alert)
+        
+        postAlert.addTextField { (userName) in
+            userName.placeholder = "Add Username..."
+            userNameTextField = userName
+        }
+        postAlert.addTextField { (message) in
+            message.placeholder = "Add Message..."
+            messageTextField = message
+        }
+        
+        let postAction = UIAlertAction(title: "Post", style: .default) { (_) in
+            guard let userName = userNameTextField.text,
+                let message = messageTextField.text,
+            !userName.isEmpty,
+                !message.isEmpty else {self.presentErrorAlert(); return}
+            self.postController.addPostWith(username: userName, text: message, completion: {
+                self.reloadTableView()
+            })
+        }
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel) { (_) in }
+        
+        postAlert.addAction(postAction)
+        postAlert.addAction(cancelAction)
+        
+        present(postAlert, animated: true)
+    }
+    
+    func presentErrorAlert(){
+        let errorAlert = UIAlertController(title: "Error", message: "Some information is missing", preferredStyle: .alert)
+        errorAlert.addAction(UIAlertAction(title: "OK", style: .default, handler: { (_) in }))
+        present(errorAlert, animated: true)
+
     }
 }
 

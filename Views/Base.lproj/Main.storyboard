@@ -58,7 +58,13 @@
                         </constraints>
                         <viewLayoutGuide key="safeArea" id="Aqm-ti-K6E"/>
                     </view>
-                    <navigationItem key="navigationItem" title="Post" id="1dA-AC-h6Q"/>
+                    <navigationItem key="navigationItem" title="Post" id="1dA-AC-h6Q">
+                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="gyz-Tg-svv">
+                            <connections>
+                                <action selector="addNewPostButtonTapped:" destination="dn4-KF-Jue" id="z4u-l6-Lye"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                     <connections>
                         <outlet property="tableView" destination="3ii-HO-AiE" id="Fds-rK-W8E"/>
                     </connections>
