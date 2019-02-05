@@ -11,10 +11,22 @@ import Foundation
 class Post: Codable {
     let text: String
     let username: String
-    let timestamp: TimeInterval = Date().timeIntervalSince1970
+    let timestamp: TimeInterval
+    var date: String {
+        get {
+            let dateInCurrentTimeZone = Calendar.current.dateComponents(in: TimeZone.current, from: Date(timeIntervalSince1970: timestamp))
+            print(dateInCurrentTimeZone)
+            let dateFormatter = DateFormatter()
+            dateFormatter.timeStyle = .medium
+            return dateInCurrentTimeZone.date!.description(with: Locale.current)
+        }
+    }
     
-    init(text: String,username: String) {
+    init(text: String,username: String, timestamp: TimeInterval = Date().timeIntervalSince1970) {
         self.username = username
         self.text = text
+        self.timestamp = timestamp
     }
+    
+    
 }

@@ -24,6 +24,7 @@ class PostListViewController: UIViewController {
         tableView.rowHeight = UITableView.automaticDimension
         tableView.refreshControl = refreshControl
         refreshControl.addTarget(self, action: #selector(refreshControllerPulled), for: .valueChanged)
+        UIApplication.shared.isNetworkActivityIndicatorVisible = true
         postController.fetchPosts {
             self.reloadTableView()
         }
@@ -31,9 +32,12 @@ class PostListViewController: UIViewController {
     
     //MARK: - Actions
     @objc func refreshControllerPulled() {
+        UIApplication.shared.isNetworkActivityIndicatorVisible = true
         postController.fetchPosts {
             self.reloadTableView()
-            self.refreshControl.endRefreshing()
+            DispatchQueue.main.async {
+                self.refreshControl.endRefreshing()
+            }
         }
     }
     
@@ -41,6 +45,7 @@ class PostListViewController: UIViewController {
     func reloadTableView() {
         DispatchQueue.main.async {
             self.tableView.reloadData()
+            UIApplication.shared.isNetworkActivityIndicatorVisible = false
         }
     }
 }
@@ -58,8 +63,7 @@ extension PostListViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "postCell", for: indexPath)
         cell.textLabel?.text = postController.posts[indexPath.row].text
-        let postDate = Date(timeIntervalSince1970: postController.posts[indexPath.row].timestamp)
-        cell.detailTextLabel?.text = "\(postController.posts[indexPath.row].username) \(postDate)"
+        cell.detailTextLabel?.text = "\(postController.posts[indexPath.row].username) \(postController.posts[indexPath.row].date)"
         return cell
     }
     
