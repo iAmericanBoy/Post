@@ -25,7 +25,7 @@ class PostListViewController: UIViewController {
         tableView.refreshControl = refreshControl
         refreshControl.addTarget(self, action: #selector(refreshControllerPulled), for: .valueChanged)
         UIApplication.shared.isNetworkActivityIndicatorVisible = true
-        postController.fetchPosts {
+        postController.fetchPosts(isReset: true) {
             self.reloadTableView()
         }
     }
@@ -33,7 +33,7 @@ class PostListViewController: UIViewController {
     //MARK: - Actions
     @objc func refreshControllerPulled() {
         UIApplication.shared.isNetworkActivityIndicatorVisible = true
-        postController.fetchPosts {
+        postController.fetchPosts(isReset: false) {
             self.reloadTableView()
             DispatchQueue.main.async {
                 self.refreshControl.endRefreshing()
@@ -92,11 +92,7 @@ class PostListViewController: UIViewController {
     }
 }
 
-
-
-extension PostListViewController: UITableViewDelegate {
-    
-}
+//MARK: - UITableViewDataSource
 extension PostListViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return postController.posts.count
@@ -108,6 +104,16 @@ extension PostListViewController: UITableViewDataSource {
         cell.detailTextLabel?.text = "\(postController.posts[indexPath.row].username) \(postController.posts[indexPath.row].date)"
         return cell
     }
-    
-    
+}
+
+//MARK: - UITableViewDelegate
+extension PostListViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        if indexPath.row >= postController.posts.count - 1{
+            postController.fetchPosts(isReset: false) {
+                self.reloadTableView()
+            }
+        }
+        
+    }
 }

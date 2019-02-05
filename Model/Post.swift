@@ -12,6 +12,11 @@ class Post: Codable {
     let text: String
     let username: String
     let timestamp: TimeInterval
+    var queryTimeStamp: TimeInterval {
+        get {
+            return timestamp.advanced(by: 0.01)
+        }
+    }
     var date: String {
         get {
             let dateInCurrentTimeZone = Calendar.current.dateComponents(in: TimeZone.current, from: Date(timeIntervalSince1970: timestamp))

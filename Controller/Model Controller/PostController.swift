@@ -47,7 +47,7 @@ class PostController {
             guard let data = data, let dataString = String(data: data, encoding: .utf8) else {print("error unwrapping data"); completion(); return}
             
             
-            self.fetchPosts(completion: {
+            self.fetchPosts(isReset: false, completion: {
                 completion()
             })
         }
@@ -58,7 +58,8 @@ class PostController {
     
     //MARK: - Read
     func fetchPosts(isReset: Bool = true, completion: @escaping () -> Void) {
-        let queryEndInterval = isReset ? Date().timeIntervalSince1970 : posts.last?.timestamp ?? Date().timeIntervalSince1970
+        let queryEndInterval = isReset ? Date().timeIntervalSince1970 : posts.last?.queryTimeStamp ?? Date().timeIntervalSince1970
+
         
         guard let baseURL = baseURL else {return}
         
